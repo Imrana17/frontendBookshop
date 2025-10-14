@@ -30,7 +30,17 @@ const Navbar = () => {
   const menuItems = ['Home', 'Articles', 'Books', 'Login'];
 
   return (
-    <AppBar position="fixed" color="inherit" elevation={0}>
+    <AppBar 
+      position="fixed" 
+      color="inherit" 
+      elevation={0}
+      sx={{
+        // Transparent background for both desktop and mobile
+        backgroundColor: 'transparent',
+        backgroundImage: 'none',
+        boxShadow: 'none',
+      }}
+    >
       <Toolbar sx={{ justifyContent: 'space-between' }}>
         <Typography
           variant="h5"
@@ -40,7 +50,7 @@ const Navbar = () => {
             flexGrow: { xs: 1, md: 0 },
           }}
         >
-          📚 MyBookShop
+          📚 
         </Typography>
 
         {/* Desktop Menu */}
@@ -51,11 +61,11 @@ const Navbar = () => {
                 key={item}
                 size="large"
                 sx={{
-                  color: 'secondary.main',
+                  color: 'primary.main',
                   mx: 1,
                   fontWeight: 'bold',
                   fontSize: '16px',
-                  backgroundColor: 'white',
+                  backgroundColor: 'transparent',
                   height: '38px',
                   width: item === 'Articles' ? '100px' : '85px',
                   '&:hover': {
@@ -78,6 +88,12 @@ const Navbar = () => {
               color="inherit"
               onClick={handleMenuOpen}
               aria-label="menu"
+              sx={{ 
+                color: 'primary.main',
+                '&:hover': {
+                  backgroundColor: 'secondary.main',
+                }
+              }}
             >
               <MenuIcon />
             </IconButton>
@@ -88,9 +104,10 @@ const Navbar = () => {
               keepMounted
               PaperProps={{
                 sx: {
-                  backgroundColor: 'white',
-                  border: '1px solid #ddd',
-
+                  // Semi-transparent background for mobile menu
+                  backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                  backdropFilter: 'blur(10px)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
                 },
               }}
             >
@@ -104,11 +121,7 @@ const Navbar = () => {
                     width: '700px',
                     '&:hover': {
                       backgroundColor: 'primary.main',
-                      color: 'white',
-                      '&:hover': {
-                        backgroundColor: 'primary.main',
-                        color: 'secondary.main',
-                      },
+                      color: 'secondary.main',
                     },
                   }}
                 >
