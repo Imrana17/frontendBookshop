@@ -1,14 +1,17 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import './App.css'
-import Welcome from './pages/Welcome';
+import Welcome from './pages/welcome';
 import LoadingSpinner from './components/LoadingSpinner';
+import { ThemeProvider } from '@mui/material/styles';
+import { CssBaseline } from '@mui/material';
+import greenGoldTheme from './theme/theme';
 
 function App() {
   const [appLoading, setAppLoading] = useState(true);
 
   // Simulate initial app loading
-  useState(() => {
+  useEffect(() => {
     const timer = setTimeout(() => {
       setAppLoading(false);
     }, 1000);
@@ -21,14 +24,17 @@ function App() {
   }
 
   return (
-    <Router>
-      <div className="App">
-        <Routes>
-          <Route path="/" element={<Welcome />} />
-          {/* Add other routes here */}
-        </Routes>
-      </div>
-    </Router>
+    <ThemeProvider theme={greenGoldTheme}>
+      <CssBaseline />
+      <Router>
+        <div className="App">
+          <Routes>
+            <Route path="/" element={<Welcome />} />
+            {/* Add other routes here */}
+          </Routes>
+        </div>
+      </Router>
+    </ThemeProvider>
   );
 }
 

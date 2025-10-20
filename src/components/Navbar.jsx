@@ -27,49 +27,54 @@ const Navbar = () => {
     setAnchorEl(null);
   };
 
-  const menuItems = ['Home', 'Articles', 'Books', 'Login'];
+  const menuItems = ['HOME', 'ABOUT', 'SERVICES', 'CLIENTS', 'CONTACT'];
 
   return (
     <AppBar 
       position="fixed" 
-      color="inherit" 
       elevation={0}
       sx={{
-        // Transparent background for both desktop and mobile
         backgroundColor: 'transparent',
         backgroundImage: 'none',
         boxShadow: 'none',
+        pt: 2
       }}
     >
-      <Toolbar sx={{ justifyContent: 'space-between' }}>
+      <Toolbar sx={{ justifyContent: 'space-between', px: { xs: 2, md: 6 } }}>
+        {/* Logo/Title */}
         <Typography
           variant="h5"
           fontWeight="bold"
           sx={{
-            color: 'primary.main',
+            color: 'secondary.main',
             flexGrow: { xs: 1, md: 0 },
+            textShadow: '1px 1px 2px rgba(0,0,0,0.5)',
+            background: 'linear-gradient(45deg, #FFD700 30%, #FFA500 90%)',
+            backgroundClip: 'text',
+            WebkitBackgroundClip: 'text',
+            color: 'transparent',
           }}
         >
-          📚 
+          Qwabs
         </Typography>
 
         {/* Desktop Menu */}
         {!isMobile && (
-          <Box>
+          <Box sx={{ display: 'flex', gap: 1 }}>
             {menuItems.map((item) => (
               <Button
                 key={item}
                 size="large"
                 sx={{
-                  color: 'primary.main',
-                  mx: 1,
+                  color: 'text.primary',
+                  px: 2,
                   fontWeight: 'bold',
-                  fontSize: '16px',
+                  fontSize: '14px',
                   backgroundColor: 'transparent',
                   height: '38px',
-                  width: item === 'Articles' ? '100px' : '85px',
+                  textShadow: '1px 1px 2px rgba(0,0,0,0.5)',
                   '&:hover': {
-                    backgroundColor: 'primary.main',
+                    backgroundColor: 'rgba(46, 139, 87, 0.2)',
                     color: 'secondary.main',
                   }
                 }}
@@ -85,13 +90,13 @@ const Navbar = () => {
           <>
             <IconButton
               edge="end"
-              color="inherit"
               onClick={handleMenuOpen}
               aria-label="menu"
               sx={{ 
-                color: 'primary.main',
+                color: 'text.primary',
                 '&:hover': {
-                  backgroundColor: 'secondary.main',
+                  backgroundColor: 'rgba(46, 139, 87, 0.2)',
+                  color: 'secondary.main',
                 }
               }}
             >
@@ -104,10 +109,9 @@ const Navbar = () => {
               keepMounted
               PaperProps={{
                 sx: {
-                  // Semi-transparent background for mobile menu
-                  backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                  backgroundColor: 'rgba(10, 47, 10, 0.95)',
                   backdropFilter: 'blur(10px)',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  border: '1px solid rgba(255, 215, 0, 0.2)',
                 },
               }}
             >
@@ -116,11 +120,10 @@ const Navbar = () => {
                   key={item}
                   onClick={handleMenuClose}
                   sx={{
-                    color: 'primary.main',
+                    color: 'text.primary',
                     fontWeight: 'bold',
-                    width: '700px',
                     '&:hover': {
-                      backgroundColor: 'primary.main',
+                      backgroundColor: 'rgba(255, 215, 0, 0.1)',
                       color: 'secondary.main',
                     },
                   }}
