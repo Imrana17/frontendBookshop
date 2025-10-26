@@ -3,7 +3,6 @@ import { Box, Typography } from '@mui/material';
 import { keyframes } from '@emotion/react';
 import LoadingSpinner from './LoadingSpinner';
 
-
 const slideLeft = keyframes`
   0% { transform: translateX(0%); }
   100% { transform: translateX(-50%); }
@@ -14,6 +13,32 @@ const InfiniteBookBackground = () => {
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [viewportHeight, setViewportHeight] = useState('100vh');
+
+  // Set proper viewport height for mobile
+  useEffect(() => {
+    const setHeight = () => {
+      // First try dvh (dynamic viewport height), then vh, with fallbacks
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
+      
+      // Use the best available viewport height unit
+      if (CSS.supports('height: 100dvh')) {
+        setViewportHeight('100dvh');
+      } else {
+        setViewportHeight('100vh');
+      }
+    };
+
+    setHeight();
+    window.addEventListener('resize', setHeight);
+    window.addEventListener('orientationchange', setHeight);
+    
+    return () => {
+      window.removeEventListener('resize', setHeight);
+      window.removeEventListener('orientationchange', setHeight);
+    };
+  }, []);
 
   // Fetch images from API
   const fetchImages = async () => {
@@ -57,13 +82,42 @@ const InfiniteBookBackground = () => {
     }
   };
 
-  // Organize images into 4 rows
-  const organizeIntoRows = (images, itemsPerRow = 20) => {
-    if (images.length === 0) return [[], [], [], []];
+  // Calculate number of rows based on screen height
+  const calculateRowsCount = () => {
+    if (typeof window !== 'undefined') {
+      const screenHeight = window.innerHeight;
+      // Calculate based on mobile-optimized row height
+      const rowHeight = 120; // Reduced for mobile
+      const rowMargin = 15; // Reduced margin
+      const totalRowSpace = rowHeight + rowMargin;
+      
+      // Add extra rows to ensure full coverage
+      const calculatedRows = Math.ceil(screenHeight / totalRowSpace) + 3;
+      console.log(`Screen height: ${screenHeight}px, creating ${calculatedRows} rows`);
+      return calculatedRows;
+    }
+    return 10; // Default fallback
+  };
+
+  // Calculate items per row based on screen width
+  const calculateItemsPerRow = () => {
+    if (typeof window !== 'undefined') {
+      const screenWidth = window.innerWidth;
+      // More items on wider screens, fewer on mobile
+      return screenWidth < 768 ? 12 : 20;
+    }
+    return 15;
+  };
+
+  // Organize images into dynamic number of rows
+  const organizeIntoRows = (images) => {
+    if (images.length === 0) return [];
     
+    const rowsCount = calculateRowsCount();
+    const itemsPerRow = calculateItemsPerRow();
     const allRows = [];
     
-    for (let row = 0; row < 4; row++) {
+    for (let row = 0; row < rowsCount; row++) {
       const rowItems = [];
       
       for (let i = 0; i < itemsPerRow; i++) {
@@ -74,6 +128,7 @@ const InfiniteBookBackground = () => {
       allRows.push(rowItems);
     }
     
+    console.log(`Created ${rowsCount} rows with ${itemsPerRow} items each`);
     return allRows;
   };
 
@@ -103,15 +158,33 @@ const InfiniteBookBackground = () => {
       const imageList = await fetchImages();
       setImages(imageList);
       
-      console.log('Organizing images into 4 rows:', imageList.length);
+      console.log('Organizing images into rows:', imageList.length);
       
-      const initialRows = organizeIntoRows(imageList, 20);
+      const initialRows = organizeIntoRows(imageList);
       setRows(initialRows);
       setLoading(false);
     };
 
     initialize();
   }, []);
+
+  // Recalculate rows on orientation change
+  useEffect(() => {
+    const handleResize = () => {
+      if (images.length > 0) {
+        const newRows = organizeIntoRows(images);
+        setRows(newRows);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    window.addEventListener('orientationchange', handleResize);
+    
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('orientationchange', handleResize);
+    };
+  }, [images]);
 
   // Animation and replacement loop
   useEffect(() => {
@@ -132,13 +205,14 @@ const InfiniteBookBackground = () => {
           top: 0,
           left: 0,
           width: '100%',
-          height: '100%',
+          height: viewportHeight,
+          minHeight: '100vh', // Fallback
           backgroundColor: '#02150250',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
           alignItems: 'center',
-          zIndex: -1,
+          zIndex: 1,
           gap: 3,
           color: 'white'
         }}
@@ -159,12 +233,17 @@ const InfiniteBookBackground = () => {
         position: 'fixed',
         top: 0,
         left: 0,
-        width: '100%',
-        height: '100%',
+        width: '100vw',
+        height: viewportHeight,
+        minHeight: '100vh', // Fallback
         overflow: 'hidden',
-        zIndex: -1,
-        // REMOVED GRADIENT OVERLAY - Clean background
-        backgroundColor: 'rgba(0, 0, 0, 0.3)' // Subtle dark overlay for better text readability
+        zIndex: 1,
+        pointerEvents: 'none',
+        backgroundColor: 'rgba(0, 0, 0, 0.3)',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-around', // Better distribution
+        padding: '10px 0' // Small padding to ensure no cropping
       }}
     >
       {/* Debug info - remove in production */}
@@ -183,18 +262,33 @@ const InfiniteBookBackground = () => {
         </Box>
       )}
 
-      {/* 4 Animated Rows */}
+      {/* Dynamic number of Animated Rows */}
       {rows.map((row, rowIndex) => (
         <Box
           key={rowIndex}
           sx={{
             display: 'flex',
             width: '200%',
-            animation: `${slideLeft} ${18 + rowIndex * 2}s linear infinite`,
-            animationDelay: `${rowIndex * 1.5}s`,
-            marginBottom: '50px',
+            animation: `${slideLeft} ${15 + (rowIndex % 8) * 2}s linear infinite`,
+            animationDelay: `${(rowIndex % 8) * 1.2}s`,
+            marginBottom: {
+              xs: '10px', // Very small on mobile
+              sm: '15px',
+              md: '20px'
+            },
+            marginTop: {
+              xs: '5px',
+              sm: '8px',
+              md: '10px'
+            },
             position: 'relative',
-            height: '130px'
+            height: {
+              xs: '100px',  // Smaller on mobile
+              sm: '110px', 
+              md: '120px'
+            },
+            pointerEvents: 'none',
+            flexShrink: 0
           }}
         >
           {/* Double the row items for seamless loop */}
@@ -202,14 +296,23 @@ const InfiniteBookBackground = () => {
             <Box
               key={`${rowIndex}-${colIndex}`}
               sx={{
-                flex: '0 0 100px',
-                height: '160px',
-                margin: '0 4px',
-                borderRadius: '4px',
+                flex: '0 0 auto',
+                width: {
+                  xs: '70px',  // Smaller on mobile
+                  sm: '80px',
+                  md: '90px'
+                },
+                height: {
+                  xs: '110px', // Smaller on mobile
+                  sm: '130px',
+                  md: '140px'
+                },
+                margin: '0 2px', // Minimal margin
+                borderRadius: '3px',
                 overflow: 'hidden',
                 boxShadow: `
-                  0 3px 8px rgba(0,0,0,0.4),
-                  0 1px 3px rgba(0,0,0,0.3),
+                  0 2px 6px rgba(0,0,0,0.4),
+                  0 1px 2px rgba(0,0,0,0.3),
                   inset 0 1px 0 rgba(255,255,255,0.1)
                 `,
                 backgroundImage: book?.url ? `url(${book.url})` : 'linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%)',
@@ -220,13 +323,7 @@ const InfiniteBookBackground = () => {
                 position: 'relative',
                 transition: 'all 0.2s ease',
                 border: '1px solid rgba(255,255,255,0.05)',
-                '&:hover': {
-                  transform: 'translateY(-2px) scale(1.02)',
-                  boxShadow: `
-                    0 5px 15px rgba(0,0,0,0.6),
-                    0 2px 5px rgba(0,0,0,0.4)
-                  `,
-                }
+                pointerEvents: 'none'
               }}
             >
               {/* Loading fallback */}

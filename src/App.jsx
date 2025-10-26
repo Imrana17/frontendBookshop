@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import './App.css'
 import Welcome from './pages/welcome';
+// import Articles from './pages/Articles';
 import LoadingSpinner from './components/LoadingSpinner';
 import { ThemeProvider } from '@mui/material/styles';
 import { CssBaseline } from '@mui/material';
@@ -30,6 +31,7 @@ function App() {
         <div className="App">
           <Routes>
             <Route path="/" element={<Welcome />} />
+            {/* <Route path="/articles" element={<Articles />} /> */}
             {/* Add other routes here */}
           </Routes>
         </div>

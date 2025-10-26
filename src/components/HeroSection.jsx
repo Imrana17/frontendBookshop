@@ -10,19 +10,15 @@ const HeroSection = () => {
         {
             type: 'books',
             mainHeading: "Discover Your Next Great Read",
-            subHeading: "Explore thousands of books across all genres",
             description: "Immerse yourself in captivating stories, gain new knowledge, and expand your horizons with our carefully curated collection of books from bestselling authors and emerging writers.",
             buttonText: "GET STARTED",
-            buttonColor: theme.palette.primary.main,
             emoji: "📚"
         },
         {
             type: 'articles',
             mainHeading: "Expand Your Knowledge",
-            subHeading: "Dive into insightful articles and research",
             description: "Stay informed with thought-provoking articles, in-depth analysis, and expert perspectives across various topics including technology, science, business, and personal development.",
             buttonText: "VIEW ARTICLES",
-            buttonColor: theme.palette.secondary.main,
             emoji: "📝"
         }
     ];
@@ -37,6 +33,15 @@ const HeroSection = () => {
 
     const currentContent = contentItems[activeContent];
 
+    // Consistent colors for both books and articles
+    const colors = {
+        mainHeading: theme.palette.secondary.main, // Gold for both
+        description: theme.palette.primary.main, // Green for both
+        buttonGradient: `linear-gradient(135deg, ${theme.palette.secondary.main} 0%, ${theme.palette.secondary.light} 30%, ${theme.palette.primary.main} 100%)`,
+        buttonHoverGradient: `linear-gradient(135deg, ${theme.palette.secondary.light} 0%, ${theme.palette.secondary.main} 30%, ${theme.palette.primary.light} 100%)`,
+        buttonText: '#000000' // Black text for gold-dominant buttons
+    };
+
     return (
         <Box 
             sx={{ 
@@ -44,65 +49,31 @@ const HeroSection = () => {
                 display: 'flex',
                 alignItems: 'center',
                 position: 'relative',
-                zIndex: 2
-            }}
+                zIndex: 2,
+                left: 13            }}
         >
             <Container maxWidth="lg">
                 <Box 
                     sx={{ 
                         color: 'text.primary',
                         maxWidth: '600px',
-                        ml: { xs: 2, md: 8 }
+                        ml: -2
                     }}
                     data-aos="fade-right"
                     data-aos-delay="200"
                 >
-                    {/* Emoji Indicator */}
-                    {/* <Typography 
-                        variant="h2"
-                        sx={{
-                            mb: 2,
-                            fontSize: { xs: '3rem', md: '4rem' },
-                            textShadow: '2px 2px 4px rgba(0,0,0,0.5)'
-                        }}
-                        data-aos="zoom-in"
-                        data-aos-delay="400"
-                    >
-                        {currentContent.emoji}
-                    </Typography> */}
-
-                    {/* Sub Heading */}
-                    <Fade in={true} timeout={800}>
-                        <Typography 
-                            variant="h6"
-                            sx={{
-                                fontSize: { xs: '0.9rem', md: '1.1rem' },
-                                mb: 1,
-                                color: 'text.secondary',
-                                textShadow: '1px 1px 2px rgba(0,0,0,0.5)',
-                                textTransform: 'uppercase',
-                                letterSpacing: '2px',
-                                fontWeight: 500
-                            }}
-                        >
-                            {currentContent.subHeading}
-                        </Typography>
-                    </Fade>
-
                     {/* Main Heading */}
                     <Fade in={true} timeout={800} key={activeContent}>
                         <Typography 
                             variant="h1" 
                             sx={{
-                                fontSize: { xs: '2.5rem', md: '4rem' },
+                                fontSize: { xs: '4.3rem',sm: "4.5rem", md: '4.5rem' },
                                 fontWeight: 'bold',
                                 lineHeight: 1.1,
                                 mb: 3,
                                 textShadow: '2px 2px 8px rgba(0,0,0,0.7)',
-                                background: `linear-gradient(45deg, ${theme.palette.text.primary} 30%, ${theme.palette.text.secondary} 90%)`,
-                                backgroundClip: 'text',
-                                WebkitBackgroundClip: 'text',
-                                color: 'transparent',
+                                color: colors.mainHeading, // Gold for both
+                                background: 'none',
                             }}
                         >
                             {currentContent.mainHeading}
@@ -114,9 +85,9 @@ const HeroSection = () => {
                         <Typography 
                             variant="h6"
                             sx={{
-                                fontSize: { xs: '1rem', md: '1.2rem' },
+                                fontSize: { xs: '1.2rem', sm: "1.5rem", md: '1.2rem' },
                                 mb: 4,
-                                color: 'text.primary',
+                                color: colors.description, // Green for both
                                 textShadow: '1px 1px 2px rgba(0,0,0,0.5)',
                                 maxWidth: '500px',
                                 lineHeight: 1.6,
@@ -132,21 +103,22 @@ const HeroSection = () => {
                         <Button
                             variant="contained"
                             sx={{
-                                backgroundColor: currentContent.buttonColor,
-                                color: currentContent.type === 'books' ? 'white' : 'black',
+                                background: colors.buttonGradient, // Same gradient for both
+                                color: colors.buttonText, // Black text for both
                                 px: 5,
                                 py: 1.5,
-                                fontSize: '1.1rem',
+                                fontSize: '1.5rem',
                                 fontWeight: 'bold',
                                 borderRadius: '50px',
                                 minWidth: '200px',
+                                // border: `2px solid ${theme.palette.secondary.main}`, // Gold border for both
                                 '&:hover': {
-                                    backgroundColor: currentContent.buttonColor,
+                                    background: colors.buttonHoverGradient, // Same hover gradient for both
                                     transform: 'translateY(-3px)',
-                                    boxShadow: `0 8px 25px ${currentContent.buttonColor}80`
+                                    boxShadow: `0 8px 25px ${theme.palette.secondary.main}80` // Gold shadow for both
                                 },
                                 transition: 'all 0.3s ease',
-                                boxShadow: `0 4px 15px ${currentContent.buttonColor}60`
+                                boxShadow: `0 4px 15px ${theme.palette.secondary.main}60` // Gold shadow for both
                             }}
                         >
                             {currentContent.buttonText}
@@ -159,14 +131,15 @@ const HeroSection = () => {
                             <Box
                                 key={index}
                                 sx={{
-                                    width: '12px',
-                                    height: '12px',
+                                    width: '18px',
+                                    height: '18px',
                                     borderRadius: '50%',
-                                    backgroundColor: index === activeContent ? currentContent.buttonColor : 'rgba(255,255,255,0.3)',
+                                    backgroundColor: index === activeContent ? colors.mainHeading : 'rgba(255,255,255,0.3)', // Gold for active
                                     cursor: 'pointer',
                                     transition: 'all 0.3s ease',
                                     '&:hover': {
-                                        backgroundColor: index === activeContent ? currentContent.buttonColor : 'rgba(255,255,255,0.5)',
+                                        backgroundColor: index === activeContent ? colors.mainHeading : 'rgba(255,255,255,0.5)',
+                                        transform: 'scale(1.2)'
                                     }
                                 }}
                                 onClick={() => setActiveContent(index)}

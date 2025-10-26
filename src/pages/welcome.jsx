@@ -29,28 +29,35 @@ const Welcome = () => {
             <Box sx={{ 
                 position: 'relative', 
                 width: '100%', 
-                overflow: 'hidden'
+                overflow: 'hidden',
+                minHeight: '100vh'
             }}>
                 {/* Animated Book Background */}
                 <InfiniteBookBackground />
          
-                {/* Hero Section */}
-                <HeroSection />
-                
-                {/* Services Section */}
-                <ServicesSection />
-                
-                {/* Recent Articles */}
-                <RecentArticles />
-                
-                {/* About Us */}
-                <AboutUs />
-                
-                {/* Contact Section */}
-                <ContactSection />
-                
-                {/* Footer */}
-                <Footer />
+                {/* Main Content Container - This wraps ALL your content */}
+                <Box sx={{ 
+                    position: 'relative', 
+                    zIndex: 10  // This brings content to front over the background
+                }}>
+                    {/* Hero Section */}
+                    <HeroSection />
+                    
+                    {/* Services Section */}
+                    <ServicesSection />
+                    
+                    {/* Recent Articles */}
+                    <RecentArticles />
+                    
+                    {/* About Us */}
+                    <AboutUs />
+                    
+                    {/* Contact Section */}
+                    <ContactSection />
+                    
+                    {/* Footer */}
+                    <Footer />
+                </Box>
             </Box>
         </>
     );

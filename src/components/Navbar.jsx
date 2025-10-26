@@ -2,7 +2,6 @@ import React from 'react';
 import {
   AppBar,
   Toolbar,
-  Typography,
   Button,
   Box,
   IconButton,
@@ -40,27 +39,10 @@ const Navbar = () => {
         pt: 2
       }}
     >
-      <Toolbar sx={{ justifyContent: 'space-between', px: { xs: 2, md: 6 } }}>
-        {/* Logo/Title */}
-        <Typography
-          variant="h5"
-          fontWeight="bold"
-          sx={{
-            color: 'secondary.main',
-            flexGrow: { xs: 1, md: 0 },
-            textShadow: '1px 1px 2px rgba(0,0,0,0.5)',
-            background: 'linear-gradient(45deg, #FFD700 30%, #FFA500 90%)',
-            backgroundClip: 'text',
-            WebkitBackgroundClip: 'text',
-            color: 'transparent',
-          }}
-        >
-          Qwabs
-        </Typography>
-
-        {/* Desktop Menu */}
+      <Toolbar sx={{ px: { xs: 2, md: 6 } }}>
+        {/* Desktop Menu - Shifted to left side */}
         {!isMobile && (
-          <Box sx={{ display: 'flex', gap: 1 }}>
+          <Box sx={{ display: 'flex', gap: 1, ml: -1 }}>
             {menuItems.map((item) => (
               <Button
                 key={item}
@@ -85,23 +67,36 @@ const Navbar = () => {
           </Box>
         )}
 
-        {/* Mobile Menu */}
+        {/* Mobile Menu - Hamburger stays on right side */}
         {isMobile && (
-          <>
-            <IconButton
-              edge="end"
-              onClick={handleMenuOpen}
-              aria-label="menu"
-              sx={{ 
-                color: 'text.primary',
-                '&:hover': {
-                  backgroundColor: 'rgba(46, 139, 87, 0.2)',
-                  color: 'secondary.main',
-                }
-              }}
-            >
-              <MenuIcon />
-            </IconButton>
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', width: '100%', mr: 2 }}>
+           <IconButton
+  edge="end"
+  onClick={handleMenuOpen}
+  aria-label="menu"
+  sx={{ 
+    color: 'text.primary',
+    '&:hover': {
+      backgroundColor: 'rgba(46, 139, 87, 0.2)',
+      color: 'secondary.main'
+    },
+    // Responsive padding for larger touch target
+    padding: {
+      xs: 2, // Larger on mobile (16px)
+      sm: 1, // Normal on larger screens (8px)
+    }
+  }}
+>
+  <MenuIcon 
+    sx={{
+      fontSize: {
+        xs: '2rem', // Larger on mobile (32px)
+        sm: '1.5rem', // Medium on tablet (24px)
+        md: '1.25rem' // Normal on desktop (20px)
+      }
+    }}
+  />
+</IconButton>
             <Menu
               anchorEl={anchorEl}
               open={Boolean(anchorEl)}
@@ -132,7 +127,7 @@ const Navbar = () => {
                 </MenuItem>
               ))}
             </Menu>
-          </>
+          </Box>
         )}
       </Toolbar>
     </AppBar>
