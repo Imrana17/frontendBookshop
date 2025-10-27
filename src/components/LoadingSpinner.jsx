@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Box, Typography } from '@mui/material';
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useTheme } from '@mui/material/styles';
 
 // Animation keyframes
 const slideLeft = keyframes`
@@ -9,11 +10,11 @@ const slideLeft = keyframes`
   100% { transform: translateX(-50%); }
 `;
 
-// Styled dot spinner component with green and gold colors
+// Styled dot spinner component with GOLD colors
 const DotSpinner = styled.div`
   --uib-size: 3.8rem;
   --uib-speed: .9s;
-  --uib-color: rgb(17, 68, 10); /* Green color */
+  --uib-color: #FFD700; /* GOLD color */
   position: relative;
   display: flex;
   align-items: center;
@@ -38,10 +39,12 @@ const DotSpinner = styled.div`
     width: 20%;
     border-radius: 50%;
     background-color: var(--uib-color);
+    background: radial-gradient(circle at 30% 30%, #FFD700, #FFEC8B);
     transform: scale(0);
     opacity: 0.5;
     animation: pulse0112 calc(var(--uib-speed) * 1.111) ease-in-out infinite;
-    box-shadow: 0 0 20px rgba(255, 215, 0, 0.4); /* Gold shadow */
+    box-shadow: 0 0 15px #FFD700, 0 0 25px rgba(255, 215, 0, 0.8); /* GOLD glow */
+    filter: brightness(1.1);
   }
 
   .dot-spinner__dot:nth-child(2) {
@@ -116,9 +119,39 @@ const DotSpinner = styled.div`
 
 const LoadingSpinner = ({ 
   message = "Loading...", 
-  backgroundColor = "#ffff",
+  backgroundColor = "linear-gradient(135deg, #0A2F0A 0%, #1B5E20 100%)",
   fullScreen = true 
 }) => {
+  const theme = useTheme();
+
+  useEffect(() => {
+    // Force hide any navbars or app bars
+    const hideNavbar = () => {
+      const navElements = document.querySelectorAll(
+        '.MuiAppBar-root, [class*="AppBar"], [class*="Navbar"], [class*="navbar"], header, nav, [role="banner"]'
+      );
+      navElements.forEach(element => {
+        element.style.display = 'none';
+      });
+    };
+
+    // Prevent body scroll
+    document.body.style.overflow = 'hidden';
+
+    hideNavbar();
+
+    return () => {
+      // Restore on unmount
+      const navElements = document.querySelectorAll(
+        '.MuiAppBar-root, [class*="AppBar"], [class*="Navbar"], [class*="navbar"], header, nav, [role="banner"]'
+      );
+      navElements.forEach(element => {
+        element.style.display = '';
+      });
+      document.body.style.overflow = '';
+    };
+  }, []);
+
   const spinner = (
     <>
       <DotSpinner className="dot-spinner">
@@ -136,8 +169,9 @@ const LoadingSpinner = ({
           variant="h6" 
           sx={{ 
             mt: 2, 
-            color: 'text.primary',
-            fontWeight: 500
+            color: theme.palette.secondary.main, // Use theme gold color
+            fontWeight: 'bold',
+            textShadow: '1px 1px 2px rgba(0,0,0,0.5)'
           }}
         >
           {message}
@@ -153,14 +187,14 @@ const LoadingSpinner = ({
           position: 'fixed',
           top: 0,
           left: 0,
-          width: '100%',
-          height: '100%',
-          backgroundColor: backgroundColor,
+          width: '100vw',
+          height: '100vh',
+          background: backgroundColor,
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
           alignItems: 'center',
-          zIndex: 9999, // High z-index to cover everything
+          zIndex: 2147483647, // Maximum possible z-index
         }}
       >
         {spinner}

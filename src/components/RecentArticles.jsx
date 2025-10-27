@@ -1,9 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Box, Container, Typography, Grid, Card, CardContent, Button, Fade } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
+import { useNavigate } from 'react-router-dom';
+import PageLoadingSpinner from './LoadingSpinner';
 
 const RecentArticles = () => {
+    const [isNavigating, setIsNavigating] = useState(false);
     const theme = useTheme();
+    const navigate = useNavigate();
 
     const articles = [
         {
@@ -28,6 +32,19 @@ const RecentArticles = () => {
             delay: 300
         }
     ];
+
+    const handleViewAllArticles = () => {
+        setIsNavigating(true);
+        // Navigate directly to articles page after delay
+        setTimeout(() => {
+            navigate('/articles');
+        }, 500);
+    };
+
+    // Show full-page loading spinner when navigating
+    if (isNavigating) {
+        return <PageLoadingSpinner message="Loading Articles..." />;
+    }
 
     return (
         <Box 
@@ -67,6 +84,7 @@ const RecentArticles = () => {
                     <Fade in={true} timeout={800} style={{ transitionDelay: '200ms' }}>
                         <Button 
                             variant="outlined"
+                            onClick={handleViewAllArticles}
                             sx={{
                                 color: theme.palette.secondary.main,
                                 borderColor: theme.palette.secondary.main,

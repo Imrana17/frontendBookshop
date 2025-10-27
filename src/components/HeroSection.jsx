@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Typography, Button, Container, Fade } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
+import { useNavigate } from 'react-router-dom';
+import PageLoadingSpinner from './LoadingSpinner';
 
 const HeroSection = () => {
     const [activeContent, setActiveContent] = useState(0);
+    const [isNavigating, setIsNavigating] = useState(false);
     const theme = useTheme();
+    const navigate = useNavigate();
 
     const contentItems = [
         {
@@ -12,14 +16,16 @@ const HeroSection = () => {
             mainHeading: "Discover Your Next Great Read",
             description: "Immerse yourself in captivating stories, gain new knowledge, and expand your horizons with our carefully curated collection of books from bestselling authors and emerging writers.",
             buttonText: "GET STARTED",
-            emoji: "📚"
+            emoji: "📚",
+            path: "/books"
         },
         {
             type: 'articles',
             mainHeading: "Expand Your Knowledge",
             description: "Stay informed with thought-provoking articles, in-depth analysis, and expert perspectives across various topics including technology, science, business, and personal development.",
             buttonText: "VIEW ARTICLES",
-            emoji: "📝"
+            emoji: "📝",
+            path: "/articles"
         }
     ];
 
@@ -31,16 +37,31 @@ const HeroSection = () => {
         return () => clearInterval(rotationInterval);
     }, []);
 
+    const handleButtonClick = (path) => {
+        if (path) {
+            setIsNavigating(true);
+            // Navigate directly to the target page after delay
+            setTimeout(() => {
+                navigate(path);
+            }, 500);
+        }
+    };
+
     const currentContent = contentItems[activeContent];
 
     // Consistent colors for both books and articles
     const colors = {
-        mainHeading: theme.palette.secondary.main, // Gold for both
-        description: theme.palette.primary.main, // Green for both
+        mainHeading: theme.palette.secondary.main,
+        description: theme.palette.primary.main,
         buttonGradient: `linear-gradient(135deg, ${theme.palette.secondary.main} 0%, ${theme.palette.secondary.light} 30%, ${theme.palette.primary.main} 100%)`,
         buttonHoverGradient: `linear-gradient(135deg, ${theme.palette.secondary.light} 0%, ${theme.palette.secondary.main} 30%, ${theme.palette.primary.light} 100%)`,
-        buttonText: '#000000' // Black text for gold-dominant buttons
+        buttonText: '#000000'
     };
+
+    // Show full-page loading spinner when navigating
+    if (isNavigating) {
+        return <PageLoadingSpinner message="Loading Articles..." />;
+    }
 
     return (
         <Box 
@@ -50,7 +71,8 @@ const HeroSection = () => {
                 alignItems: 'center',
                 position: 'relative',
                 zIndex: 2,
-                left: 13            }}
+                left: 13
+            }}
         >
             <Container maxWidth="lg">
                 <Box 
@@ -72,7 +94,7 @@ const HeroSection = () => {
                                 lineHeight: 1.1,
                                 mb: 3,
                                 textShadow: '2px 2px 8px rgba(0,0,0,0.7)',
-                                color: colors.mainHeading, // Gold for both
+                                color: colors.mainHeading,
                                 background: 'none',
                             }}
                         >
@@ -87,7 +109,7 @@ const HeroSection = () => {
                             sx={{
                                 fontSize: { xs: '1.2rem', sm: "1.5rem", md: '1.2rem' },
                                 mb: 4,
-                                color: colors.description, // Green for both
+                                color: colors.description,
                                 textShadow: '1px 1px 2px rgba(0,0,0,0.5)',
                                 maxWidth: '500px',
                                 lineHeight: 1.6,
@@ -102,23 +124,23 @@ const HeroSection = () => {
                     <Fade in={true} timeout={800} style={{ transitionDelay: '400ms' }}>
                         <Button
                             variant="contained"
+                            onClick={() => handleButtonClick(currentContent.path)}
                             sx={{
-                                background: colors.buttonGradient, // Same gradient for both
-                                color: colors.buttonText, // Black text for both
+                                background: colors.buttonGradient,
+                                color: colors.buttonText,
                                 px: 5,
                                 py: 1.5,
                                 fontSize: '1.5rem',
                                 fontWeight: 'bold',
                                 borderRadius: '50px',
                                 minWidth: '200px',
-                                // border: `2px solid ${theme.palette.secondary.main}`, // Gold border for both
                                 '&:hover': {
-                                    background: colors.buttonHoverGradient, // Same hover gradient for both
+                                    background: colors.buttonHoverGradient,
                                     transform: 'translateY(-3px)',
-                                    boxShadow: `0 8px 25px ${theme.palette.secondary.main}80` // Gold shadow for both
+                                    boxShadow: `0 8px 25px ${theme.palette.secondary.main}80`
                                 },
                                 transition: 'all 0.3s ease',
-                                boxShadow: `0 4px 15px ${theme.palette.secondary.main}60` // Gold shadow for both
+                                boxShadow: `0 4px 15px ${theme.palette.secondary.main}60`
                             }}
                         >
                             {currentContent.buttonText}
@@ -134,7 +156,7 @@ const HeroSection = () => {
                                     width: '18px',
                                     height: '18px',
                                     borderRadius: '50%',
-                                    backgroundColor: index === activeContent ? colors.mainHeading : 'rgba(255,255,255,0.3)', // Gold for active
+                                    backgroundColor: index === activeContent ? colors.mainHeading : 'rgba(255,255,255,0.3)',
                                     cursor: 'pointer',
                                     transition: 'all 0.3s ease',
                                     '&:hover': {
