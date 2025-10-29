@@ -17,7 +17,8 @@ import {
   FavoriteBorder,
   Bookmark,
   BookmarkBorder,
-  CalendarToday
+  CalendarToday,
+  ArrowBack // Make sure this is imported
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@mui/material/styles';
@@ -120,6 +121,11 @@ const Articles = () => {
     }
   };
 
+  // Handle back navigation
+  const handleBack = () => {
+    navigate('/');
+  };
+
   // Show loading spinner while fetching data
   if (loading) {
     return <LoadingSpinner message="Loading Articles..." />;
@@ -158,6 +164,29 @@ const Articles = () => {
       py: 4
     }}>
       <Container maxWidth="xl">
+        {/* Back Button - Moved to top level */}
+        <Container maxWidth="lg" sx={{ pb: 3 }}>
+          <IconButton
+            onClick={handleBack}
+            sx={{
+              color: secondaryMain,
+              mb: 2,
+              backgroundColor: `${secondaryMain}20`,
+              borderRadius: 2,
+              '&:hover': {
+                transform: 'scale(1.05)',
+                backgroundColor: `${secondaryMain}30`,
+              },
+              transition: 'all 0.3s ease'
+            }}
+          >
+            <ArrowBack />
+            <Typography variant="body1" sx={{ ml: 1, color: secondaryMain, fontWeight: 'bold' }}>
+              Back to Home
+            </Typography>
+          </IconButton>
+        </Container>
+
         <Fade in={true} timeout={800}>
           <Typography 
             variant="h3" 

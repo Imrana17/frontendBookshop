@@ -60,7 +60,7 @@ const HeroSection = () => {
 
     // Show full-page loading spinner when navigating
     if (isNavigating) {
-        return <PageLoadingSpinner message="Loading Articles..." />;
+        return <PageLoadingSpinner />;
     }
 
     return (
